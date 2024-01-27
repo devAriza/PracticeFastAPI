@@ -1,5 +1,5 @@
 from fastapi import FastAPI #importar clase FastAPI
-
+from database import database as connection
 
 #Ingresar a documentacion del servicio web con URL/docs
 
@@ -11,15 +11,20 @@ app = FastAPI(title = 'Proyecto para reseniar peliculas', #titulo de proyecto
 
 
 #Ejecutar cuando el server este por comenzar
-@app.on_event("startup")
+@app.on_event('startup')
 async def startup_event():
-    print('El servidor va a comenzar')
+    if connection.is_closed():
+        connection.connect()
+        
+        print('Connecting...')
 
 #Ejecutar cuando el server este por finalizar
-@app.on_event("shutdown")
+@app.on_event('shutdown')
 def shutdown_event():
-    print('El servidor se encuentra finalizando')
+    if not connection.is_closed():
+        connection.close()
 
+        print('BD close')
 
 #La funcion encargada de retornar respuesta
 #Si hay multiples funciones, se completen de forma asincrona con 'async'
