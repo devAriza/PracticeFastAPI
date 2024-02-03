@@ -1,6 +1,7 @@
 from fastapi import FastAPI #importar clase FastAPI
 from database import User, Movie, UserReview
 from database import database as connection
+from schemas import UserBaseModel
 
 #Ingresar a documentacion del servicio web con URL/docs
 
@@ -39,3 +40,12 @@ async def index():
 async def about():
     return app.description
 
+@app.post('/users/')
+async def create_user(user: UserBaseModel): #indicamos clase de tipo BaseModel, correctos datos de entrada
+
+    user = User.create(
+        username = user.username,
+        password = user.password
+    )
+
+    return user.id
