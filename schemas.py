@@ -36,3 +36,27 @@ class UserResponseModel(BaseModel):
     class Config:
         from_attributes = True
         
+#Atributos dentro de modelo obligatorios
+class ReviewRequestModel(BaseModel):
+    user_id : int
+    movie_id : int
+    review : str
+    score : int
+
+class ReviewResponseModel(BaseModel):
+    id : int
+    movie_id : int
+    review : str
+    score : int
+
+    class Config:
+        from_attributes = True
+
+class MovieRequestModel(BaseModel):
+    title : str
+
+class MovieResponseModel(BaseModel):
+    title : str
+
+    class Config:
+        from_attributes = True

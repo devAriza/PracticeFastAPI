@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException #importar clase FastAPI
 from database import User, Movie, UserReview
 from database import database as connection
-from schemas import UserRequestModel, UserResponseModel
+from schemas import UserRequestModel, UserResponseModel, ReviewRequestModel, ReviewResponseModel, MovieRequestModel, MovieResponseModel
 
 #Ingresar a documentacion del servicio web con URL/docs
 
@@ -47,7 +47,7 @@ async def create_user(user: UserRequestModel): #indicamos clase de tipo BaseMode
     #Verificar con consulta, si el username ya existe sin que el server deje de funcionar
     if User.select().where(User.username == user.username).exists():
         #notificar error
-        return HTTPException(409, 'El username ya se encuentra en uso.')
+        raise HTTPException(409, 'El username ya se encuentra en uso.')
 
     #utilizar metodo de clase sin uso de objeto
     hash_password = User.create_password(user.password)
@@ -63,3 +63,29 @@ async def create_user(user: UserRequestModel): #indicamos clase de tipo BaseMode
 
     #retornar Modelo, que nos permite validar datos de entrada y de salida
     return user
+
+@app.post('/reviews', response_model = ReviewResponseModel)
+async def create_reviews(user_review : ReviewRequestModel):
+    
+    #Crear a partir de los datos que envie el cliente
+    user_review = UserReview.create(
+        user_id = user_review.user_id,
+        movie_id = user_review.movie_id,
+        review = user_review.review,
+        score = user_review.score
+    )
+
+    return user_review
+
+@app.post('/movies', response_model = MovieResponseModel)
+async def create_movies(movie : MovieRequestModel):
+
+    if Movie.select().where(Movie.title == movie.title).exists():
+        #notificar error
+        raise HTTPException(409, 'La pelicula ya se encuentra en la BD.')
+    
+    movie = Movie.create(
+        title = movie.title
+    )
+
+    return movie

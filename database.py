@@ -42,7 +42,7 @@ class User(Model):
         return h.hexdigest()
 
 class Movie(Model):
-    title = CharField(max_length = 50)
+    title = CharField(max_length = 50, unique = True)
     created_at = DateTimeField(default = datetime.now)
 
     def __str__(self):
