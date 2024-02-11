@@ -1,6 +1,18 @@
 #validar datos de entrada y salida
+from typing import Any
 from pydantic import BaseModel,field_validator, ValidationError, validator
+from pydantic.v1.utils import GetterDict
+from peewee import ModelSelect
 
+#Convertir objeto tipo Model (peewee) a diccionario
+class PeeweeGetterDict(GetterDict):
+    def get(self, key: Any, default: Any = None):
+        #Obtener cada uno de los atributos de objeto Model y comparar con ResponseModel
+        res = getattr(self._obj, key, default)
+        if isinstance(res, ModelSelect):
+            return list(res)
+        
+        return res
 
 #Garantizar que cada uno de los atributos correspondan al tipo de dato
 #Valores que se envian. Datos de entrada
@@ -19,3 +31,8 @@ class UserRequestModel(BaseModel):
 class UserResponseModel(BaseModel):
     id : int
     username : str
+
+    #Sirve para responder con objeto tipo JSON. Convertir modelos de peewee a modelos de pydantic
+    class Config:
+        from_attributes = True
+        

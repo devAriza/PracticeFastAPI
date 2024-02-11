@@ -58,7 +58,8 @@ async def create_user(user: UserRequestModel): #indicamos clase de tipo BaseMode
         password = hash_password
     )
 
-    #Serializar objeto para ser enviado como respuesta del server
+    #Serializar objeto para ser enviado como respuesta del server. Se convierte a un diccionario
+
 
     #retornar Modelo, que nos permite validar datos de entrada y de salida
-    return UserResponseModel(id = user.id, username = user.username)
+    return user
