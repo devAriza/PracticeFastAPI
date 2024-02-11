@@ -40,7 +40,7 @@ async def index():
 async def about():
     return app.description
 
-@app.post('/users/')
+@app.post('/users')
 async def create_user(user: UserBaseModel): #indicamos clase de tipo BaseModel, correctos datos de entrada
 
     user = User.create(
