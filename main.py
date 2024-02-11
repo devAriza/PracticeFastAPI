@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException #importar clase FastAPI
 from database import User, Movie, UserReview
 from database import database as connection
-from schemas import UserBaseModel
+from schemas import UserRequestModel, UserResponseModel
 
 #Ingresar a documentacion del servicio web con URL/docs
 
@@ -40,8 +40,9 @@ async def index():
 async def about():
     return app.description
 
-@app.post('/users')
-async def create_user(user: UserBaseModel): #indicamos clase de tipo BaseModel, correctos datos de entrada
+#indicar tipo de respuesta = objeto serializado
+@app.post('/users', response_model = UserResponseModel)
+async def create_user(user: UserRequestModel): #indicamos clase de tipo BaseModel, correctos datos de entrada
 
     #Verificar con consulta, si el username ya existe sin que el server deje de funcionar
     if User.select().where(User.username == user.username).exists():
@@ -57,4 +58,7 @@ async def create_user(user: UserBaseModel): #indicamos clase de tipo BaseModel, 
         password = hash_password
     )
 
-    return user.id
+    #Serializar objeto para ser enviado como respuesta del server
+
+    #retornar Modelo, que nos permite validar datos de entrada y de salida
+    return UserResponseModel(id = user.id, username = user.username)
