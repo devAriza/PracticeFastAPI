@@ -27,15 +27,18 @@ class UserRequestModel(BaseModel):
         
         return username
     
-#Generar respuestas de tipo usuario
-class UserResponseModel(BaseModel):
-    id : int
-    username : str
-
+#Refactor
+class ResponseModel(BaseModel):
     #Sirve para responder con objeto tipo JSON. Convertir modelos de peewee a modelos de pydantic
     class Config:
         from_attributes = True
-        
+
+#Generar respuestas de tipo usuario
+class UserResponseModel(ResponseModel):
+    id : int
+    username : str
+
+
 #Atributos dentro de modelo obligatorios
 class ReviewRequestModel(BaseModel):
     user_id : int
@@ -43,20 +46,16 @@ class ReviewRequestModel(BaseModel):
     review : str
     score : int
 
-class ReviewResponseModel(BaseModel):
+class ReviewResponseModel(ResponseModel):
     id : int
     movie_id : int
     review : str
     score : int
 
-    class Config:
-        from_attributes = True
 
 class MovieRequestModel(BaseModel):
     title : str
 
-class MovieResponseModel(BaseModel):
+class MovieResponseModel(ResponseModel):
     title : str
 
-    class Config:
-        from_attributes = True
