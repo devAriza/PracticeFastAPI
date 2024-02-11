@@ -1,4 +1,4 @@
-from fastapi import FastAPI #importar clase FastAPI
+from fastapi import FastAPI, HTTPException #importar clase FastAPI
 from database import User, Movie, UserReview
 from database import database as connection
 from schemas import UserBaseModel
@@ -42,6 +42,11 @@ async def about():
 
 @app.post('/users')
 async def create_user(user: UserBaseModel): #indicamos clase de tipo BaseModel, correctos datos de entrada
+
+    #Verificar con consulta, si el username ya existe sin que el server deje de funcionar
+    if User.select().where(User.username == user.username).exists():
+        #notificar error
+        return HTTPException(409, 'El username ya se encuentra en uso.')
 
     #utilizar metodo de clase sin uso de objeto
     hash_password = User.create_password(user.password)
