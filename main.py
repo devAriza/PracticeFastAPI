@@ -67,6 +67,15 @@ async def create_user(user: UserRequestModel): #indicamos clase de tipo BaseMode
 @app.post('/reviews', response_model = ReviewResponseModel)
 async def create_reviews(user_review : ReviewRequestModel):
     
+    #Validar llaves foraneas
+    #Validar id de usuario exista
+    if User.select().where(User.id == user_review.user_id).first() is None:
+        raise HTTPException(status_code = 404, detail = 'User not found')
+
+    #Validar que el id de pelicula exista
+    if Movie.select().where(Movie.id == user_review.movie_id).first() is None:
+        raise HTTPException(status_code = 404, detail = 'Movie not found')
+
     #Crear a partir de los datos que envie el cliente
     user_review = UserReview.create(
         user_id = user_review.user_id,
