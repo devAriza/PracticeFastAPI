@@ -43,9 +43,13 @@ async def about():
 @app.post('/users')
 async def create_user(user: UserBaseModel): #indicamos clase de tipo BaseModel, correctos datos de entrada
 
+    #utilizar metodo de clase sin uso de objeto
+    hash_password = User.create_password(user.password)
+
     user = User.create(
         username = user.username,
-        password = user.password
+        #asignar la contrasenia hash al atributo creado
+        password = hash_password
     )
 
     return user.id

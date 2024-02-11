@@ -1,3 +1,4 @@
+import hashlib
 from peewee import * 
 from datetime import datetime
 
@@ -18,7 +19,7 @@ database = MySQLDatabase(nameBD, user = usuario, password = '', host = hosst, po
 #Para que una clase se considere modelo, hereda de la clase Model
 
 class User(Model):
-    username = CharField(max_length = 50, unique = True)
+    username = CharField(max_length = 50, unique = True) #No acepta valores duplicados
     password = CharField(max_length = 50)
     create_at = DateTimeField(default = datetime.now)
 
@@ -28,6 +29,17 @@ class User(Model):
     class Meta:
         database = database
         table_name = 'users'
+
+    #Encriptar contrasenia
+    #Metodo de clase indicado con el decorador classmethod
+    @classmethod
+    def create_password(cls, password):
+        h = hashlib.md5()
+        #Codificar contrasenia a utf-8
+        h.update(password.encode('utf-8'))
+
+        #retorna el hexadecimal de la contrasenia
+        return h.hexdigest()
 
 class Movie(Model):
     title = CharField(max_length = 50)
