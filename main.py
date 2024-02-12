@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException #importar clase FastAPI
 from database import User, Movie, UserReview
 from database import database as connection
 from schemas import UserRequestModel, UserResponseModel, ReviewRequestModel, ReviewResponseModel, MovieRequestModel, MovieResponseModel
+from typing import List
 
 #Ingresar a documentacion del servicio web con URL/docs
 
@@ -65,26 +66,26 @@ async def create_user(user: UserRequestModel): #indicamos clase de tipo BaseMode
     return user
 
 @app.post('/reviews', response_model = ReviewResponseModel)
-async def create_reviews(user_review : ReviewRequestModel):
+async def create_reviews(user_reviews : ReviewRequestModel):
     
     #Validar llaves foraneas
     #Validar id de usuario exista
-    if User.select().where(User.id == user_review.user_id).first() is None:
+    if User.select().where(User.id == user_reviews.user_id).first() is None:
         raise HTTPException(status_code = 404, detail = 'User not found')
 
     #Validar que el id de pelicula exista
-    if Movie.select().where(Movie.id == user_review.movie_id).first() is None:
+    if Movie.select().where(Movie.id == user_reviews.movie_id).first() is None:
         raise HTTPException(status_code = 404, detail = 'Movie not found')
 
     #Crear a partir de los datos que envie el cliente
-    user_review = UserReview.create(
-        user_id = user_review.user_id,
-        movie_id = user_review.movie_id,
-        review = user_review.review,
-        score = user_review.score
+    user_reviews = UserReview.create(
+        user_id = user_reviews.user_id,
+        movie_id = user_reviews.movie_id,
+        reviews = user_reviews.reviews,
+        score = user_reviews.score
     )
 
-    return user_review
+    return user_reviews
 
 @app.post('/movies', response_model = MovieResponseModel)
 async def create_movies(movie : MovieRequestModel):
@@ -98,3 +99,12 @@ async def create_movies(movie : MovieRequestModel):
     )
 
     return movie
+
+#Obtener listado de resenias
+#Indicamos retornar listado de objetos tipo reviewresponseModel
+@app.get('/reviews', response_model = List[ReviewResponseModel])
+async def get_reviews():
+    reviews = UserReview.select() #SELECT * FROM user_reviews
+
+    #generar lista de objetos user_review
+    return [user_reviews for user_reviews in reviews]

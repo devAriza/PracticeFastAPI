@@ -61,7 +61,7 @@ class UserReview(Model):
     created_at = DateTimeField(default = datetime.now)
     
     def __str__(self):
-        return f'{self.user.username} - {self.movie.title}'
+        return f'{self.user.username} - #{self.movie.title}'
     
     class Meta:
         database = database

@@ -43,7 +43,7 @@ class UserResponseModel(ResponseModel):
 class ReviewRequestModel(BaseModel):
     user_id : int
     movie_id : int
-    review : str
+    reviews : str
     score : int
 
     #validar score este entre 1 - 5
@@ -57,7 +57,7 @@ class ReviewRequestModel(BaseModel):
 class ReviewResponseModel(ResponseModel):
     id : int
     movie_id : int
-    review : str
+    reviews : str
     score : int
 
 
