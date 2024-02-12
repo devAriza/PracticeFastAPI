@@ -108,3 +108,18 @@ async def get_reviews():
 
     #generar lista de objetos user_review
     return [user_reviews for user_reviews in reviews]
+
+#Obtener una resenia en particular. Crear endpoint que permita obtener y mostrar resenia en particular
+#Parametros que el cliente envia al server mediante url, en API REST, parametros denotar recurso en particular
+#Cliente puede enviar ID de X resenia, consulta, retornar resenia
+#Ruta con parametro obligatorio
+@app.get('/reviews/{review_id}', response_model = ReviewResponseModel)
+async def get_review(review_id : int):
+    
+    #Realizar peticion
+    user_review = UserReview.select().where(UserReview.id == review_id).first()
+
+    if user_review is None:
+        raise HTTPException(status_code = 404, detail = 'Review not found')
+    
+    return user_review
