@@ -65,6 +65,13 @@ class ReviewRequestPutModel(BaseModel, ReviewValidator):
     reviews : str
     score : int
 
+class ReviewRequestDeleteModel(BaseModel, ReviewValidator):
+    id : int
+    user_id : int
+    movie_id : int
+    reviews : str
+    score : int
+
 
 class MovieRequestModel(BaseModel):
     title : str
