@@ -38,14 +38,8 @@ class UserResponseModel(ResponseModel):
     id : int
     username : str
 
-
-#Atributos dentro de modelo obligatorios
-class ReviewRequestModel(BaseModel):
-    user_id : int
-    movie_id : int
-    reviews : str
-    score : int
-
+#Validar score
+class ReviewValidator():
     #validar score este entre 1 - 5
     @field_validator('score')
     def score_validator(cls,score):
@@ -54,9 +48,20 @@ class ReviewRequestModel(BaseModel):
         
         return score
 
+#Atributos dentro de modelo obligatorios
+class ReviewRequestModel(BaseModel, ReviewValidator):
+    user_id : int
+    movie_id : int
+    reviews : str
+    score : int
+
 class ReviewResponseModel(ResponseModel):
     id : int
     movie_id : int
+    reviews : str
+    score : int
+
+class ReviewRequestPutModel(BaseModel, ReviewValidator):
     reviews : str
     score : int
 
@@ -66,4 +71,10 @@ class MovieRequestModel(BaseModel):
 
 class MovieResponseModel(ResponseModel):
     title : str
+
+
+#Permitir editar 2 datos
+
+
+    
 

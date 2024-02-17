@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException #importar clase FastAPI
 from database import User, Movie, UserReview
 from database import database as connection
-from schemas import UserRequestModel, UserResponseModel, ReviewRequestModel, ReviewResponseModel, MovieRequestModel, MovieResponseModel
+from schemas import UserRequestModel, UserResponseModel, ReviewRequestModel, ReviewResponseModel, MovieRequestModel, MovieResponseModel, ReviewRequestPutModel
 from typing import List
 
 #Ingresar a documentacion del servicio web con URL/docs
@@ -123,3 +123,23 @@ async def get_review(review_id : int):
         raise HTTPException(status_code = 404, detail = 'Review not found')
     
     return user_review
+
+#Actualizar resenia, con respecto a valores que se envian
+#Valores deben de enviarse a traves el cuerpo de la peticion. que son el segundo parametro de la funcion async
+@app.put('/reviews/{review_id}', response_model = ReviewResponseModel)
+#En segundo parametro, vienen los datos enviados
+async def update_review(review_id : int, review_request: ReviewRequestPutModel ):
+
+    #Obtener resenia a actualizar
+    user_review = UserReview.select().where(UserReview.id == review_id).first()
+
+    if user_review is None:
+        raise HTTPException(status_code = 404, detail = 'Review not found')
+    
+    user_review.reviews = review_request.reviews
+    user_review.score = review_request.score
+
+    user_review.save()
+
+    return user_review
+    
