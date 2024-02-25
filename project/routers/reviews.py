@@ -3,7 +3,7 @@ from ..database import UserReview, Movie, User
 from ..schemas import ReviewRequestDeleteModel, ReviewRequestPutModel, ReviewResponseModel, ReviewRequestModel
 from typing import List
 
-router = APIRouter(prefix = '/api/v1/reviews')
+router = APIRouter(prefix = '/reviews')
 
 @router.post('', response_model = ReviewResponseModel)
 async def create_reviews(user_reviews : ReviewRequestModel):

@@ -1,6 +1,6 @@
 #Python reconoce a la carpeta como un paquete
 
-from fastapi import FastAPI #importar clase FastAPI
+from fastapi import FastAPI, APIRouter #importar clase FastAPI
 from .database import User, Movie, UserReview
 from .database import database as connection
 
@@ -14,10 +14,14 @@ app = FastAPI(title = 'Proyecto para reseniar peliculas', #titulo de proyecto
               version = '1' #versionar proyecto
               )
 
+api_v1 = APIRouter(prefix = '/api/v1')
+
 #anadir rutas a app pasando como argumento listado de rutas. Objeto de
-app.include_router(user_router)
-app.include_router(review_router)
-app.include_router(movie_router)
+api_v1.include_router(user_router)
+api_v1.include_router(review_router)
+api_v1.include_router(movie_router)
+
+app.include_router(api_v1)
 
 #Ejecutar cuando el server este por comenzar
 @app.on_event('startup')

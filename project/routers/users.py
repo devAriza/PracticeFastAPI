@@ -3,7 +3,7 @@ from ..database import User
 from ..schemas import UserRequestModel, UserResponseModel
 
 #Crear rutas bajo contexto y nos permite aniadir prefijo.
-router = APIRouter(prefix = '/api/v1/users')
+router = APIRouter(prefix = '/users')
 
 #indicar tipo de respuesta = objeto serializado
 @router.post('', response_model = UserResponseModel)
