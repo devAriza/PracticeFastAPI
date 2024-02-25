@@ -47,6 +47,16 @@ class ReviewValidator():
             raise ValueError('El rango para score es de 1 a 5')
         
         return score
+    
+# ------------- Movie -------------
+
+class MovieRequestModel(BaseModel):
+    title : str
+
+class MovieResponseModel(ResponseModel):
+    id : int
+    title : str
+
 
 #Atributos dentro de modelo obligatorios
 class ReviewRequestModel(BaseModel, ReviewValidator):
@@ -57,14 +67,17 @@ class ReviewRequestModel(BaseModel, ReviewValidator):
 
 class ReviewResponseModel(ResponseModel):
     id : int
-    movie_id : int
+    #Relacionar objetos
+    movie: MovieResponseModel
     reviews : str
     score : int
 
+#Editar review
 class ReviewRequestPutModel(BaseModel, ReviewValidator):
     reviews : str
     score : int
 
+#Eliminar review
 class ReviewRequestDeleteModel(BaseModel, ReviewValidator):
     id : int
     user_id : int
@@ -73,14 +86,8 @@ class ReviewRequestDeleteModel(BaseModel, ReviewValidator):
     score : int
 
 
-class MovieRequestModel(BaseModel):
-    title : str
-
-class MovieResponseModel(ResponseModel):
-    title : str
 
 
-#Permitir editar 2 datos
 
 
     

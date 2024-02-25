@@ -100,11 +100,23 @@ async def create_movies(movie : MovieRequestModel):
 
     return movie
 
-#Obtener listado de resenias
+#Obtener listado de resenias #TODAS
 #Indicamos retornar listado de objetos tipo reviewresponseModel
+# @app.get('/reviews', response_model = List[ReviewResponseModel])
+# async def get_reviews():
+#     reviews = UserReview.select().paginate(page, limit) #SELECT * FROM user_reviews
+
+#     #generar lista de objetos user_review
+#     return [user_reviews for user_reviews in reviews]
+
+#24/02/2024 JAR
+#Obtener listado de X cantidad de resenias
 @app.get('/reviews', response_model = List[ReviewResponseModel])
-async def get_reviews():
-    reviews = UserReview.select() #SELECT * FROM user_reviews
+async def get_reviews(page : int = 1, limit : int = 10 ):
+    #Paginar consulta, retorna bloques de registros.
+    #QuerySET, es opcional. Se encuentran despues del "?"
+    #Recibe a pag actual, cantidad de elementos
+    reviews = UserReview.select().paginate(page, limit) #SELECT * FROM user_reviews
 
     #generar lista de objetos user_review
     return [user_reviews for user_reviews in reviews]
