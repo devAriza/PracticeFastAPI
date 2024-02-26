@@ -1,4 +1,4 @@
-from fastapi import HTTPException, APIRouter
+from fastapi import HTTPException, APIRouter, Response
 from fastapi.security import HTTPBasicCredentials
 from ..database import User
 from ..schemas import UserRequestModel, UserResponseModel
@@ -34,7 +34,7 @@ async def create_user(user: UserRequestModel): #indicamos clase de tipo BaseMode
 #Conocer que usuario se esta autenticando, usuario debe enviar user y password con HTTPUserCredentials
 #25/02/2024
 @router.post('/login', response_model = UserResponseModel)
-async def login(credentials : HTTPBasicCredentials):
+async def login(credentials: HTTPBasicCredentials, response: Response):
     
     user = User.select().where(User.username == credentials.username).first()
 
@@ -44,4 +44,11 @@ async def login(credentials : HTTPBasicCredentials):
     if user.password != User.create_password(credentials.password):
         raise HTTPException(404, 'Password error')
     
+    #Crear y enviar cookie al cliente. Servidor envia cookie al cliente y no tendra que autenticarse nuevamente.
+    #Crear cookie es con Response (fastapi). Anadir cookie como respuesta al servidor
+
+    #Crear y enviar cookies
+    response.set_cookie(key = 'user_id', value = user.id) #Token generado respecto a usuario
+    
     return user
+
