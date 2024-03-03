@@ -85,13 +85,44 @@ import requests
 
 # ----------------------- requests DELETE ----------------------- #
 #Numero de id \ user_review
-REVIEW_ID = 4
-URL = f'http://127.0.0.1:8000/api/v1/reviews/{REVIEW_ID}'
+# REVIEW_ID = 4
+# URL = f'http://127.0.0.1:8000/api/v1/reviews/{REVIEW_ID}'
 
-response = requests.delete(URL)
+# response = requests.delete(URL)
+# if response.status_code == 200:
+#     print("La resenia fue eliminada de forma correcta")
+#     #Objeto JSON que servidor retorna
+#     print(response.json())
+# else:
+#     print(response.content)
+
+# ----------------------- requests Cookies ----------------------- #
+URL = 'http://127.0.0.1:8000/api/v1/users/'
+
+USER = {
+    'username' : 'jorge12345',
+    'password' : '12345'
+}
+
+response = requests.post(URL + 'login',json=USER) 
+
 if response.status_code == 200:
-    print("La resenia fue eliminada de forma correcta")
-    #Objeto JSON que servidor retorna
-    print(response.json())
-else:
-    print(response.content)
+    print('Usuario autenticado de forma correcta.')
+    # print(response.json())
+    # #Encontrar todas las cookies que el servidor retorna
+    # print(response.cookies) #RequestsCookieJar
+    # print(response.cookies.get_dict()) #convertir RequestsCookieJar a diccionario
+
+    user_id = response.cookies.get_dict().get('user_id') #Obtener valor que retorna (id desde Cookie)
+    print(user_id)
+
+
+    #Obtener todas las resenias que el user autenticado a creado
+    cookies = {
+        'user_id' : user_id
+    }
+    response = requests.get(URL + 'reviews', cookies=cookies)
+
+    if response.status_code == 200:
+        for review in response.json():
+            print(f"{review['reviews']} - {review['score']}")
