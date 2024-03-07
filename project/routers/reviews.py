@@ -19,7 +19,7 @@ async def create_reviews(user_reviews : ReviewRequestModel):
 
     #Crear a partir de los datos que envie el cliente
     user_reviews = UserReview.create(
-        user_id = user_reviews.user_id,
+        user_id = user_reviews.user_id, #Owner
         movie_id = user_reviews.movie_id,
         reviews = user_reviews.reviews,
         score = user_reviews.score

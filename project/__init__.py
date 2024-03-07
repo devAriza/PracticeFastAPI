@@ -1,10 +1,12 @@
 #Python reconoce a la carpeta como un paquete
 
-from fastapi import FastAPI, APIRouter #importar clase FastAPI
+from fastapi import FastAPI, APIRouter, Depends, HTTPException,status #importar clase FastAPI
 from .database import User, Movie, UserReview
 from .database import database as connection
 
 from .routers import user_router, review_router, movie_router
+
+from fastapi.security import OAuth2PasswordRequestForm
 
 #Ingresar a documentacion del servicio web con URL/docs
 
@@ -20,6 +22,28 @@ api_v1 = APIRouter(prefix = '/api/v1')
 api_v1.include_router(user_router)
 api_v1.include_router(review_router)
 api_v1.include_router(movie_router)
+
+#Funcion encargada de autenticar clientes por medio de OAuth2
+#06/03/2024 JAR
+@api_v1.post('/auth')
+async def auth(data : OAuth2PasswordRequestForm = Depends()):
+    #Objeto OAuth2PassRe... contiene 2 parametros (username, password)
+
+    #modelo User y metodo estatico de user
+    user = User.authenticate(data.username, data.password)
+
+    if user:
+        return{
+            'username':data.username,
+            'password':data.password
+        }
+    else:
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = 'Username o password incorrectos',
+            headers = {'WWW-Autenticate' : 'Beraer'}
+        )
+
 
 app.include_router(api_v1)
 
