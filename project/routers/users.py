@@ -1,7 +1,8 @@
-from fastapi import HTTPException, APIRouter, Response, Cookie
+from fastapi import HTTPException, APIRouter, Response, Cookie, Depends
 from fastapi.security import HTTPBasicCredentials
 from ..database import User
 from ..schemas import UserRequestModel, UserResponseModel, ReviewResponseModel
+from ..common import oauth2_schema
 from typing import List
 
 #Crear rutas bajo contexto y nos permite aniadir prefijo.
@@ -53,6 +54,7 @@ async def login(credentials: HTTPBasicCredentials, response: Response):
 
     return user
 
+'''
 #Resenias de usuarios
 @router.get('/reviews',response_model = List[ReviewResponseModel])
 #Se almacena valor de la cookie que tiene el mismo valor del cookie creado
@@ -68,3 +70,14 @@ async def get_reviews(user_id : int = Cookie(None)):
 
     #Retornar listado de resenias del usuario
     return [user_review for user_review in user.reviews]
+'''
+
+#Cliente realice peticion sobre endpoint se debe de enviar access token
+@router.get('/reviews')
+#Se almacena valor de la cookie que tiene el mismo valor del cookie creado
+#Bloquear con parametro de tipo oauth2passwordBearer. Obtener el usuario apartir del access token
+async def get_reviews(token : str = Depends(oauth2_schema)):
+    return {
+        'token' : token
+    }
+

@@ -8,6 +8,8 @@ from .routers import user_router, review_router, movie_router
 
 from fastapi.security import OAuth2PasswordRequestForm
 
+from .common import create_access_token
+
 #Ingresar a documentacion del servicio web con URL/docs
 
 #Crear instancia de FastAPI
@@ -34,8 +36,8 @@ async def auth(data : OAuth2PasswordRequestForm = Depends()):
 
     if user:
         return{
-            'username':data.username,
-            'password':data.password
+            'access_token' : create_access_token(user),
+            'token_type' : 'Bearer'
         }
     else:
         raise HTTPException(
