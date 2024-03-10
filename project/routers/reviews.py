@@ -1,17 +1,19 @@
-from fastapi import HTTPException, APIRouter
+from fastapi import HTTPException, APIRouter, Depends
 from ..database import UserReview, Movie, User
 from ..schemas import ReviewRequestDeleteModel, ReviewRequestPutModel, ReviewResponseModel, ReviewRequestModel
+from ..common import get_current_user
 from typing import List
 
 router = APIRouter(prefix = '/reviews')
 
 @router.post('', response_model = ReviewResponseModel)
-async def create_reviews(user_reviews : ReviewRequestModel):
+async def create_reviews(user_reviews : ReviewRequestModel, user : User = Depends(get_current_user)):
     
     #Validar llaves foraneas
     #Validar id de usuario exista
-    if User.select().where(User.id == user_reviews.user_id).first() is None:
-        raise HTTPException(status_code = 404, detail = 'User not found')
+    #Validacion sin autenticacion OAuth2
+    '''if User.select().where(User.id == user_reviews.user_id).first() is None:
+        raise HTTPException(status_code = 404, detail = 'User not found')'''
 
     #Validar que el id de pelicula exista
     if Movie.select().where(Movie.id == user_reviews.movie_id).first() is None:
@@ -19,7 +21,7 @@ async def create_reviews(user_reviews : ReviewRequestModel):
 
     #Crear a partir de los datos que envie el cliente
     user_reviews = UserReview.create(
-        user_id = user_reviews.user_id, #Owner
+        user_id = user.id, #Owner
         movie_id = user_reviews.movie_id,
         reviews = user_reviews.reviews,
         score = user_reviews.score
@@ -67,13 +69,17 @@ async def get_review(review_id : int):
 #Valores deben de enviarse a traves el cuerpo de la peticion. que son el segundo parametro de la funcion async
 @router.put('/{review_id}', response_model = ReviewResponseModel)
 #En segundo parametro, vienen los datos enviados
-async def update_review(review_id : int, review_request: ReviewRequestPutModel ):
+async def update_review(review_id : int, review_request: ReviewRequestPutModel, user : User = Depends(get_current_user)):
 
     #Obtener resenia a actualizar
     user_review = UserReview.select().where(UserReview.id == review_id).first()
 
     if user_review is None:
         raise HTTPException(status_code = 404, detail = 'Review not found')
+    
+    #Usuario autenticado mediante OAuth2
+    if user_review.user_id != user.id:
+        raise HTTPException(status_code=401, detail="No eres propietario")
     
     user_review.reviews = review_request.reviews
     user_review.score = review_request.score
@@ -83,9 +89,13 @@ async def update_review(review_id : int, review_request: ReviewRequestPutModel )
     return user_review
     
 @router.delete('/{review_id}', response_model = ReviewRequestDeleteModel)
-async def delete_review(review_id : int) :
+async def delete_review(review_id : int, user : User = Depends(get_current_user)) :
     
     user_review = UserReview.select().where(UserReview.id == review_id).first()
+
+    #Usuario autenticado mediante OAuth2
+    if user_review.user_id != user.id:
+        raise HTTPException(status_code=401, detail="No eres propietario")
 
     if user_review is None:
         raise HTTPException(status_code = 404, detail = 'Review not found')

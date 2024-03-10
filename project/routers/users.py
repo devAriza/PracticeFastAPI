@@ -73,12 +73,9 @@ async def get_reviews(user_id : int = Cookie(None)):
 '''
 
 #Cliente realice peticion sobre endpoint se debe de enviar access token
-@router.get('/reviews')
+@router.get('/reviews', response_model = List[ReviewResponseModel])
 #Se almacena valor de la cookie que tiene el mismo valor del cookie creado
 #Bloquear con parametro de tipo oauth2passwordBearer. Obtener el usuario apartir del access token
 async def get_reviews(user : User = Depends(get_current_user)):
-    return {
-        'id' : user.id,
-        'username' : user.username
-    }
-
+      
+    return [user_review for user_review in user.reviews]

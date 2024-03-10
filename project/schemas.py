@@ -43,8 +43,8 @@ class ReviewValidator():
     #validar score este entre 1 - 5
     @field_validator('score')
     def score_validator(cls,score):
-        if score < 1 or score > 5:
-            raise ValueError('El rango para score es de 1 a 5')
+        if score < 0 or score > 5:
+            raise ValueError('El rango para score es de 0 a 5')
         
         return score
     
@@ -60,7 +60,7 @@ class MovieResponseModel(ResponseModel):
 
 #Atributos dentro de modelo obligatorios
 class ReviewRequestModel(BaseModel, ReviewValidator):
-    user_id : int
+    #user_id : int #Se comenta ya que se sabe el user mediante la autenticacion de aouth2
     movie_id : int
     reviews : str
     score : int
