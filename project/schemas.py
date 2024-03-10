@@ -38,32 +38,57 @@ class UserResponseModel(ResponseModel):
     id : int
     username : str
 
-
-#Atributos dentro de modelo obligatorios
-class ReviewRequestModel(BaseModel):
-    user_id : int
-    movie_id : int
-    reviews : str
-    score : int
-
+#Validar score
+class ReviewValidator():
     #validar score este entre 1 - 5
     @field_validator('score')
     def score_validator(cls,score):
-        if score < 1 or score > 5:
-            raise ValueError('El rango para score es de 1 a 5')
+        if score < 0 or score > 5:
+            raise ValueError('El rango para score es de 0 a 5')
         
         return score
-
-class ReviewResponseModel(ResponseModel):
-    id : int
-    movie_id : int
-    reviews : str
-    score : int
-
+    
+# ------------- Movie -------------
 
 class MovieRequestModel(BaseModel):
     title : str
 
 class MovieResponseModel(ResponseModel):
+    id : int
     title : str
+
+
+#Atributos dentro de modelo obligatorios
+class ReviewRequestModel(BaseModel, ReviewValidator):
+    #user_id : int #Se comenta ya que se sabe el user mediante la autenticacion de aouth2
+    movie_id : int
+    reviews : str
+    score : int
+
+class ReviewResponseModel(ResponseModel):
+    id : int
+    #Relacionar objetos
+    movie: MovieResponseModel
+    reviews : str
+    score : int
+
+#Editar review
+class ReviewRequestPutModel(BaseModel, ReviewValidator):
+    reviews : str
+    score : int
+
+#Eliminar review
+class ReviewRequestDeleteModel(BaseModel, ReviewValidator):
+    id : int
+    user_id : int
+    movie_id : int
+    reviews : str
+    score : int
+
+
+
+
+
+
+    
 

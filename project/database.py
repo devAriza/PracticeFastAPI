@@ -30,6 +30,14 @@ class User(Model):
         database = database
         table_name = 'users'
 
+    #Obligatorio cls en classmethod
+    @classmethod
+    def authenticate(cls, username, password):
+        user = cls.select().where(User.username == username).first()
+        #validar usuario y password con hash sea igual
+        if user and user.password == cls.create_password(password):
+            return user
+
     #Encriptar contrasenia
     #Metodo de clase indicado con el decorador classmethod
     @classmethod
