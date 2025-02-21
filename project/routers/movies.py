@@ -24,3 +24,13 @@ async def get_movies():
     moviess = Movie.select()
 
     return [movies for movies in moviess]
+
+@router.get('/{title}', response_model = MovieResponseModel)
+async def get_movie(title: str):
+
+    movie = Movie.select().where(Movie.title == title).first()
+
+    if movie is None:
+        raise HTTPException(404, detail = 'Movie not found')
+
+    return movie

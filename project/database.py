@@ -14,7 +14,7 @@ usuario = 'root'
 hosst = 'localhost'
 puerto = 3306
 
-database = MySQLDatabase(nameBD, user = usuario, password = '', host = hosst, port = puerto)
+database = MySQLDatabase(nameBD, user = usuario, password = 'Mysql12345', host = hosst, port = puerto)
 
 #Para que una clase se considere modelo, hereda de la clase Model
 
